@@ -4,18 +4,18 @@ namespace App;
 
 use Illuminate\Support\Facades\DB;
 
-class Airport extends AbstractModel
+class Aircraft extends AbstractModel
 {
-    const NUMBER_OF_RESULTS = 5;
+    const NUMBER_OF_RESULTS = 0;
     const MAX_DISTANCE_IN_METERS = 50000;
-    const TABLE_NAME = 'airports';
+    const TABLE_NAME = 'aircrafts';
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function getAircrafts()
+    public function getAirport()
     {
-        return $this->hasMany('App\Aircraft', 'airport_id');
+        return $this->belongsTo('App\Airport', 'id');
     }
 
     /**
@@ -25,10 +25,10 @@ class Airport extends AbstractModel
      *
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
      */
-    public static function getClosestsFromCoordinates(float $latitude, float $longitude, int $maxDistance = Airport::MAX_DISTANCE_IN_METERS,int $limit = Airport::NUMBER_OF_RESULTS)
+    public static function getFromAirportId(int $airportId)
     {
         $queryResult = static::query()
-            ->whereRaw(DB::raw(sprintf("st_distance_sphere(point(%f, %f), point(longitude, latitude)) < %d", $longitude, $latitude, $maxDistance)))
+            ->where('airport_id', $airportId)
             ->orderBy(DB::raw(sprintf("st_distance(point(%f, %f), point(latitude, longitude))", $latitude, $longitude)))
             ->take($limit)
             ->get();
@@ -41,10 +41,11 @@ class Airport extends AbstractModel
      * @param float $longitude
      * @param int $maxDistance
      *
-     * @return Airport
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
      */
     public static function getClosestFromCoordinates(float $latitude, float $longitude, int $maxDistance = Aircraft::MAX_DISTANCE_IN_METERS)
     {
-        return self::getClosestsFromCoordinates($latitude, $longitude, $maxDistance = Aircraft::MAX_DISTANCE_IN_METERS, 1)->get(0);
+        return self::getClosestsFromCoordinates($latitude, $longitude, $maxDistance = Aircraft::MAX_DISTANCE_IN_METERS, 1);
     }
 }
+
