@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\Airport;
 use App\Entity\Flight;
 use App\Entity\FlightCollection;
 use App\Services\FlightManager;
@@ -10,6 +9,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use Tests\TestCase;
 
+/**
+ * todo WIP no enougth time for TDD
+ *
+ * Class FlightManagerTest
+ * @package Tests\Unit
+ */
 class FlightManagerTest extends TestCase
 {
     /**
